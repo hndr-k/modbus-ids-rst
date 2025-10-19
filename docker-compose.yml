@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  modbus:
+    build:
+      context: .        
+      dockerfile: Dockerfile
+    image: modbus-server:latest
+    container_name: modbus-server
+    ports:
+      - "5020:5020"
+    restart: unless-stopped
