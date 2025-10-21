@@ -1,12 +1,36 @@
 version: "3.9"
 
 services:
-  modbus:
+
+  modbus-server:
     build:
       context: .        
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_mod_server
     image: modbus-server:latest
     container_name: modbus-server
     ports:
       - "5020:5020"
     restart: unless-stopped
+    networks: [appnet]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.socket(); s.settimeout(1); s.connect(('127.0.0.1',5020)); s.close()"]
+      interval: 2s
+      timeout: 1s
+      retries: 20
+      start_period: 2s
+  modbus-traffic:
+    build:
+      context: .        
+      dockerfile: Dockerfile_mod_traffic
+    image: modbus-traffic:latest
+    depends_on:
+      modbus-server:
+        condition: service_healthy
+    container_name: modbus-traffic
+    restart: unless-stopped
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: bridge
+    name: appnet
