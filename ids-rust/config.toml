@@ -1,0 +1,5 @@
+iface = "br-16e3daf05008"
+promisc = true
+immediate = true
+snaplen = 65535
+timeout = 10
